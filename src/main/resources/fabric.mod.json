@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "numen",
+  "version": "${version}",
+  "name": "Numen",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "Apache-2.0",
+  "icon": "assets/numen/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "com.williambl.numen.client.NumenClient"
+    ],
+    "main": [
+      "com.williambl.numen.Numen"
+    ]
+  },
+  "mixins": [
+    "numen.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12.1",
+    "fabric": "*",
+    "minecraft": "1.17.1"
+  }
+}
