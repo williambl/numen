@@ -12,6 +12,10 @@ repositories {
         url = "https://maven.fabricmc.net/"
         name = "Fabric"
     }
+    maven {
+        name = 'Ladysnake Mods'
+        url = 'https://ladysnake.jfrog.io/artifactory/mods'
+    }
     mavenLocal()
     mavenCentral()
 }
@@ -23,6 +27,7 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation "net.fabricmc:fabric-language-kotlin:${project.flk_version}"
+    modImplementation "io.github.onyxstudios:Cardinal-Components-API:${project.cc_version}" //TODO: include modules needed
 }
 
 processResources {
