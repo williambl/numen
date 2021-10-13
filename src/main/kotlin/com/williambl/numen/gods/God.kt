@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Util
+import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 import net.minecraft.world.poi.PointOfInterestType
 
@@ -16,8 +17,8 @@ abstract class God: EnvironmentEvaluator {
     open fun getName() = TranslatableText(translationKey)
 
     abstract val pointOfInterestType: PointOfInterestType
-    abstract fun onSacrifice(world: World, sacrificer: PlayerEntity, sacrificed: LivingEntity)
-    abstract fun onVotive(world: World, sacrificer: PlayerEntity, offering: ItemStack)
+    abstract fun onSacrifice(world: World, pos: BlockPos, sacrificer: PlayerEntity, sacrificed: LivingEntity)
+    abstract fun onVotive(world: World, pos: BlockPos, sacrificer: PlayerEntity, offering: ItemStack)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

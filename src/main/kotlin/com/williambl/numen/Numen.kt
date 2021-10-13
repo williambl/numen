@@ -1,5 +1,6 @@
 package com.williambl.numen
 
+import com.williambl.numen.gods.Gods
 import com.williambl.numen.gods.sacrifice.ChthonicEnvironmentEvaluator
 import com.williambl.numen.gods.sacrifice.NatureEnvironmentEvaluator
 import com.williambl.numen.gods.sacrifice.OceanicEnvironmentEvaluator
@@ -30,6 +31,8 @@ fun init() {
             return@executes 0;
         })
     }
+
+    Gods.init()
 }
 
 fun id(path: String) = Identifier("numen", path)
