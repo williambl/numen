@@ -1,5 +1,6 @@
 package com.williambl.numen
 
+import com.williambl.numen.gods.sacrifice.ChthonicEnvironmentEvaluator
 import com.williambl.numen.gods.sacrifice.NatureEnvironmentEvalutator
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.minecraft.server.command.CommandManager
@@ -12,7 +13,13 @@ fun init() {
         dispatcher.register(CommandManager.literal("evaluate_naturalness").executes { ctx ->
             val pos = BlockPos(ctx.source.position)
             val world = ctx.source.world
-            ctx.source.sendFeedback(LiteralText(NatureEnvironmentEvalutator.evaluate(world, pos, 3, 25).toString()), false)
+            ctx.source.sendFeedback(LiteralText(NatureEnvironmentEvalutator.evaluate(world, pos, 25, 3).toString()), false)
+            return@executes 0;
+        })
+        dispatcher.register(CommandManager.literal("evaluate_chthonicness").executes { ctx ->
+            val pos = BlockPos(ctx.source.position)
+            val world = ctx.source.world
+            ctx.source.sendFeedback(LiteralText(ChthonicEnvironmentEvaluator.evaluate(world, pos, 25, 3).toString()), false)
             return@executes 0;
         })
     }
