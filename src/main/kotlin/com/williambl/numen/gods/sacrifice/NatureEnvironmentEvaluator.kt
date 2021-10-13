@@ -10,7 +10,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 import kotlin.streams.asSequence
 
-object NatureEnvironmentEvalutator: EnvironmentEvaluator {
+object NatureEnvironmentEvaluator: EnvironmentEvaluator {
 
     override fun evaluate(world: World, centre: BlockPos, radius: Int, yRadius: Int): Double {
         val rawScore = BlockPos.streamOutwards(centre, radius, yRadius, radius).asSequence()
