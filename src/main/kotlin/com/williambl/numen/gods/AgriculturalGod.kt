@@ -20,6 +20,7 @@ class AgriculturalGod: God() {
     }
 
     override fun onVotive(world: World, pos: BlockPos, sacrificer: PlayerEntity, offering: ItemStack) {
+        sacrificer.sendMessage(LiteralText("hmm.. I rate this offering ${evaluate(world, pos, 25, 3) * 10}/10."), false)
     }
 
     override fun evaluate(world: World, centre: BlockPos, radius: Int, yRadius: Int): Double {

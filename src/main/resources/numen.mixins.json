@@ -1,9 +1,10 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.williambl.numen.numen.mixin",
+  "package": "com.williambl.numen.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "ItemStackMixin"
   ],
   "client": [
   ],
