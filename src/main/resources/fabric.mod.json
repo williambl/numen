@@ -11,10 +11,16 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "com.williambl.numen.client.NumenClient"
+      {
+        "adapter": "kotlin",
+        "value": "com.williambl.numen.client.NumenClientKt::clientInit"
+      }
     ],
     "main": [
-      "com.williambl.numen.Numen"
+      {
+        "adapter": "kotlin",
+        "value": "com.williambl.numen.NumenKt::init"
+      }
     ]
   },
   "mixins": [
