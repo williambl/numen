@@ -1,6 +1,9 @@
 package com.williambl.numen.gods
 
+import com.williambl.numen.gods.component.GodFavourComponent
+import com.williambl.numen.gods.component.PlayerGodFavourComponent
 import com.williambl.numen.id
+import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
 import net.minecraft.entity.ItemEntity
@@ -40,6 +43,9 @@ object Gods {
         }
     }
 
+    fun registerComponents(registry: EntityComponentFactoryRegistry) {
+        registry.registerForPlayers(GodFavourComponent.KEY) { p -> PlayerGodFavourComponent(p) }
+    }
 
     @JvmStatic
     fun onItemEntityDestroyed(entity: ItemEntity) {

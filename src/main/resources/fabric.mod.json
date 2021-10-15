@@ -21,11 +21,22 @@
         "adapter": "kotlin",
         "value": "com.williambl.numen.NumenKt::init"
       }
+    ],
+    "cardinal-components-entity": [
+      {
+        "adapter": "kotlin",
+        "value": "com.williambl.numen.gods.Gods::registerComponents"
+      }
     ]
   },
   "mixins": [
     "numen.mixins.json"
   ],
+  "custom": {
+    "cardinal-components": [
+      "numen:god_favour"
+    ]
+  },
   "depends": {
     "fabricloader": ">=0.12.1",
     "fabric": "*",

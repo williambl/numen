@@ -4,6 +4,8 @@ import com.williambl.numen.gods.sacrifice.EnvironmentEvaluator
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
+import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Util
@@ -17,6 +19,7 @@ abstract class God: EnvironmentEvaluator {
     open fun getName() = TranslatableText(translationKey)
 
     abstract val pointOfInterestType: PointOfInterestType
+    abstract fun onPlayerTick(world: ServerWorld, player: ServerPlayerEntity, favour: Double): Double
     abstract fun onSacrifice(world: World, pos: BlockPos, sacrificer: PlayerEntity, sacrificed: LivingEntity)
     abstract fun onVotive(world: World, pos: BlockPos, sacrificer: PlayerEntity, offering: ItemStack)
 
