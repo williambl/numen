@@ -1,6 +1,8 @@
 package com.williambl.numen.gods
 
 import com.williambl.numen.gods.sacrifice.EnvironmentEvaluator
+import com.williambl.numen.gods.sacrifice.SacrificialVictimEvaluator
+import com.williambl.numen.gods.sacrifice.VotiveOfferingEvaluator
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
@@ -13,7 +15,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 import net.minecraft.world.poi.PointOfInterestType
 
-abstract class God: EnvironmentEvaluator {
+abstract class God: EnvironmentEvaluator, SacrificialVictimEvaluator, VotiveOfferingEvaluator {
     private val translationKey: String by lazy { Util.createTranslationKey("god", Gods.REGISTRY.getId(this)) }
 
     open fun getName() = TranslatableText(translationKey)
