@@ -22,7 +22,7 @@ abstract class Spell {
     abstract fun matches(text: String): Boolean
     abstract fun getData(text: String): NbtCompound
     abstract fun run(world: World, player: PlayerEntity, data: NbtCompound)
-    abstract fun onTick(attachedTo: LivingEntity)
+    abstract fun onTick(attachedTo: LivingEntity, data: NbtCompound)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -39,3 +39,5 @@ abstract class Spell {
         return relevantGods.hashCode()
     }
 }
+
+typealias SpellData = Pair<Spell, NbtCompound>

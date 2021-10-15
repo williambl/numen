@@ -2,19 +2,24 @@ package com.williambl.numen.gods
 
 import com.williambl.numen.gods.component.GodFavourComponent
 import com.williambl.numen.gods.component.PlayerGodFavourComponent
+import com.williambl.numen.gods.sacrifice.ChthonicEnvironmentEvaluator
+import com.williambl.numen.gods.sacrifice.NatureEnvironmentEvaluator
+import com.williambl.numen.gods.sacrifice.OceanicEnvironmentEvaluator
 import com.williambl.numen.id
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.server.command.CommandManager
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.text.LiteralText
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.poi.PointOfInterestStorage
-import net.minecraft.world.poi.PointOfInterestType
 import kotlin.streams.asSequence
 
 object Gods: EntityComponentInitializer {
@@ -42,6 +47,45 @@ object Gods: EntityComponentInitializer {
 
                     god.onSacrifice(world, pos, entity, killed)
                 }
+        }
+
+        CommandRegistrationCallback.EVENT.register { dispatcher, dedicated ->
+            dispatcher.register(CommandManager.literal("evaluate_naturalness").executes { ctx ->
+                val pos = BlockPos(ctx.source.position)
+                val world = ctx.source.world
+                ctx.source.sendFeedback(
+                    LiteralText(NatureEnvironmentEvaluator.evaluate(world, pos, 25, 3).toString()),
+                    false
+                )
+                return@executes 0
+            })
+            dispatcher.register(CommandManager.literal("evaluate_chthonicness").executes { ctx ->
+                val pos = BlockPos(ctx.source.position)
+                val world = ctx.source.world
+                ctx.source.sendFeedback(
+                    LiteralText(
+                        ChthonicEnvironmentEvaluator.evaluate(world, pos, 25, 3).toString()
+                    ), false
+                )
+                return@executes 0
+            })
+            dispatcher.register(CommandManager.literal("evaluate_oceanicness").executes { ctx ->
+                val pos = BlockPos(ctx.source.position)
+                val world = ctx.source.world
+                ctx.source.sendFeedback(
+                    LiteralText(OceanicEnvironmentEvaluator.evaluate(world, pos, 25, 3).toString()),
+                    false
+                )
+                return@executes 0
+            })
+            dispatcher.register(CommandManager.literal("favour").executes { ctx ->
+                try {
+                    ctx.source.sendFeedback(LiteralText(ctx.source.player.getFavour(AGRICULTURAL).toString()), false)
+                } catch (e: Exception) {
+                    println(e)
+                }
+                return@executes 0
+            })
         }
     }
 

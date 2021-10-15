@@ -26,6 +26,10 @@
       {
         "adapter": "kotlin",
         "value": "com.williambl.numen.gods.Gods"
+      },
+      {
+        "adapter": "kotlin",
+        "value": "com.williambl.numen.spells.Spells"
       }
     ]
   },
@@ -34,7 +38,8 @@
   ],
   "custom": {
     "cardinal-components": [
-      "numen:god_favour"
+      "numen:god_favour",
+      "numen:attached_spells"
     ]
   },
   "depends": {
