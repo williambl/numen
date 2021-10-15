@@ -4,6 +4,8 @@ import com.williambl.numen.gods.component.GodFavourComponent
 import com.williambl.numen.gods.component.PlayerGodFavourComponent
 import com.williambl.numen.id
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
+import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
+import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
 import net.minecraft.entity.ItemEntity
@@ -15,10 +17,10 @@ import net.minecraft.world.poi.PointOfInterestStorage
 import net.minecraft.world.poi.PointOfInterestType
 import kotlin.streams.asSequence
 
-object Gods {
+object Gods: EntityComponentInitializer {
     val REGISTRY = FabricRegistryBuilder.createSimple(God::class.java, id("gods")).buildAndRegister()
 
-    val AGRICULTURAL = Registry.register(REGISTRY, id("agricultural"), AgriculturalGod())
+    val AGRICULTURAL = Registry.register(REGISTRY, id("agricultural"), AgriculturalGod)
 
     fun init() {
         ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register { world, entity, killed ->
@@ -43,8 +45,8 @@ object Gods {
         }
     }
 
-    fun registerComponents(registry: EntityComponentFactoryRegistry) {
-        registry.registerForPlayers(GodFavourComponent.KEY) { p -> PlayerGodFavourComponent(p) }
+    override fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
+        registry.registerForPlayers(GodFavourComponent.KEY, ::PlayerGodFavourComponent, RespawnCopyStrategy.ALWAYS_COPY)
     }
 
     @JvmStatic
@@ -70,4 +72,7 @@ object Gods {
                 world.getClosestPlayer(entity, 10.0)?.let { player -> god.onVotive(world, pos, player, entity.stack) }
             }
     }
+
+    fun PlayerEntity.getFavourComponent(): GodFavourComponent = GodFavourComponent.KEY[this]
+    fun PlayerEntity.getFavour(god: God): Double = GodFavourComponent.KEY[this][god] ?: 0.0 //we know it won't be null because of withdefault
 }

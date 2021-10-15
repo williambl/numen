@@ -25,7 +25,7 @@
     "cardinal-components-entity": [
       {
         "adapter": "kotlin",
-        "value": "com.williambl.numen.gods.Gods::registerComponents"
+        "value": "com.williambl.numen.gods.Gods"
       }
     ]
   },
