@@ -1,12 +1,15 @@
 package com.williambl.numen.gods
 
 import com.williambl.numen.decay
+import com.williambl.numen.gods.Gods.getFavour
 import com.williambl.numen.gods.Gods.getFavourComponent
 import com.williambl.numen.gods.sacrifice.NatureEnvironmentEvaluator
 import com.williambl.numen.id
 import net.fabricmc.fabric.api.`object`.builder.v1.world.poi.PointOfInterestHelper
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags
 import net.minecraft.block.*
+import net.minecraft.block.entity.BlockEntity
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.mob.HostileEntity
@@ -25,7 +28,7 @@ import net.minecraft.world.poi.PointOfInterestType
 import kotlin.math.max
 import kotlin.streams.asSequence
 
-object AgriculturalGod: God() {
+object AgriculturalGod: God(), PlayerBlockBreakEvents.After {
     override val pointOfInterestType: PointOfInterestType = PointOfInterestHelper.register(id("agricultural_altar"), 0, 1, Blocks.AMETHYST_BLOCK)
 
     override fun onPlayerTick(world: ServerWorld, player: ServerPlayerEntity, favour: Double): Double {
@@ -90,5 +93,21 @@ object AgriculturalGod: God() {
                 (state.block as Fertilizable).grow(player.world as ServerWorld, player.random, pos, state)
                 player.world.syncWorldEvent(WorldEvents.BONE_MEAL_USED, pos, 0)
             }
+    }
+
+    override fun afterBlockBreak(
+        world: World,
+        player: PlayerEntity,
+        pos: BlockPos,
+        state: BlockState,
+        blockEntity: BlockEntity?
+    ) {
+        if (state.block is CropBlock && world.random.nextDouble() < player.getFavour(this) * 0.02) {
+            Block.dropStacks(state, world, pos, blockEntity)
+        }
+    }
+
+    init {
+        PlayerBlockBreakEvents.AFTER.register(this)
     }
 }
