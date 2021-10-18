@@ -26,6 +26,7 @@ object Gods: EntityComponentInitializer {
     val REGISTRY = FabricRegistryBuilder.createSimple(God::class.java, id("gods")).buildAndRegister()
 
     val AGRICULTURAL = Registry.register(REGISTRY, id("agricultural"), AgriculturalGod)
+    val OCEANIC = Registry.register(REGISTRY, id("oceanic"), OceanicGod)
 
     fun init() {
         ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register { world, entity, killed ->
