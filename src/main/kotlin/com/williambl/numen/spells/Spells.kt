@@ -7,13 +7,20 @@ import com.williambl.numen.gods.component.GodFavourComponent
 import com.williambl.numen.id
 import com.williambl.numen.spells.component.AttachedSpellsComponent
 import com.williambl.numen.spells.component.PlayerAttachedSpellsComponent
+import com.williambl.numen.spells.tablet.EditClayTabletGuiDescription
+import com.williambl.numen.spells.tablet.WritableClayTabletItem
+import com.williambl.numen.spells.tablet.setTabletText
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.screen.ScreenHandler
+import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.server.command.CommandManager
 import net.minecraft.util.registry.Registry
 
@@ -21,6 +28,10 @@ object Spells: EntityComponentInitializer {
     val REGISTRY = FabricRegistryBuilder.createSimple(Spell::class.java, id("spells")).buildAndRegister()
 
     val CROP_GROWING = Registry.register(REGISTRY, id("crop_growing"), CropGrowingSpell)
+
+    val WRITABLE_TABLET = Registry.register(Registry.ITEM, id("writable_tablet"), WritableClayTabletItem)
+
+    val EDIT_CLAY_TABLET_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(id("edit_clay_tablet")) { syncId, inv -> EditClayTabletGuiDescription(syncId, inv) }
 
     fun init() {
         CommandRegistrationCallback.EVENT.register { dispatcher, dedicated ->
@@ -32,6 +43,11 @@ object Spells: EntityComponentInitializer {
                     return@executes 0
                 }
             ))
+        }
+
+        ServerPlayNetworking.registerGlobalReceiver(id("edit_clay_tablet")) { server, player, handler, buf, response ->
+            val text = buf.readString()
+            server.execute { player.mainHandStack.setTabletText(text) }
         }
     }
 
