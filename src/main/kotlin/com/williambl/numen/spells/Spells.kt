@@ -1,15 +1,15 @@
 package com.williambl.numen.spells
 
 import com.mojang.brigadier.arguments.StringArgumentType
-import com.sun.jdi.connect.Connector
-import com.williambl.numen.gods.God
-import com.williambl.numen.gods.component.GodFavourComponent
 import com.williambl.numen.id
+import com.williambl.numen.mixin.LeveledCauldronBlockMixin
 import com.williambl.numen.spells.component.AttachedSpellsComponent
 import com.williambl.numen.spells.component.PlayerAttachedSpellsComponent
 import com.williambl.numen.spells.tablet.EditClayTabletGuiDescription
 import com.williambl.numen.spells.tablet.FiredClayTabletItem
 import com.williambl.numen.spells.tablet.WritableClayTabletItem
+import com.williambl.numen.spells.tablet.infusion.InfusionCauldronBlock
+import com.williambl.numen.spells.tablet.infusion.InfusionCauldronBlock.InfusionCauldronBlockEntity
 import com.williambl.numen.spells.tablet.setTabletText
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
@@ -18,13 +18,15 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry
+import net.minecraft.block.cauldron.CauldronBehavior
+import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
-import net.minecraft.screen.ScreenHandler
-import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.server.command.CommandManager
+import net.minecraft.tag.ItemTags
+import net.minecraft.util.ActionResult
 import net.minecraft.util.registry.Registry
 import java.util.*
 
@@ -37,6 +39,12 @@ object Spells: EntityComponentInitializer {
     val FIRED_TABLET = Registry.register(Registry.ITEM, id("fired_tablet"), FiredClayTabletItem)
 
     val EDIT_CLAY_TABLET_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(id("edit_clay_tablet")) { syncId, inv -> EditClayTabletGuiDescription(syncId, inv) }
+
+    val INFUSION_CAULDRON_BLOCK = Registry.register(Registry.BLOCK, id("infusion_cauldron"), InfusionCauldronBlock)
+    val INFUSION_CAULDRON_BE_TYPE = Registry.register(Registry.BLOCK_ENTITY_TYPE, id("infusion_cauldron"), BlockEntityType.Builder.create(
+        InfusionCauldronBlock::InfusionCauldronBlockEntity,
+        INFUSION_CAULDRON_BLOCK
+    ).build(null))
 
     fun init() {
         CommandRegistrationCallback.EVENT.register { dispatcher, dedicated ->

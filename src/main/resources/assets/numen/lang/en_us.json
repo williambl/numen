@@ -1,5 +1,8 @@
 {
   "item.numen.writable_clay_tablet": "Writable Clay Tablet",
   "item.numen.clay_tablet.tooltip.no_inscription": "No Inscription",
-  "item.numen.clay_tablet.tooltip.inscription": "Inscription: %s"
+  "item.numen.clay_tablet.tooltip.inscription": "Inscription: %s",
+  "item.numen.clay_tablet.tooltip.no_infusions": "No Infusions",
+  "item.numen.clay_tablet.tooltip.infusions": "Infusions: %s",
+  "item.numen.clay_tablet.tooltip.infusion": "%2$dx %1$s"
 }

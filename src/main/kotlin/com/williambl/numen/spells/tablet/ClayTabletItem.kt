@@ -4,9 +4,6 @@ import net.minecraft.client.item.TooltipContext
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
-import net.minecraft.nbt.NbtElement
-import net.minecraft.nbt.NbtList
-import net.minecraft.nbt.NbtString
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
@@ -28,6 +25,16 @@ abstract class ClayTabletItem(settings: Settings) : Item(settings) {
                 TranslatableText("item.numen.clay_tablet.tooltip.inscription", it)
             }
         }.formatted(Formatting.GRAY))
+        stack.getTabletInfusions().let {
+            if (it.isEmpty()) {
+                tooltip.add(TranslatableText("item.numen.clay_tablet.tooltip.no_infusions").formatted(Formatting.GRAY))
+            } else {
+                tooltip.add(TranslatableText("item.numen.clay_tablet.tooltip.infusions").formatted(Formatting.GRAY))
+                tooltip.addAll(it.map { entry ->
+                    TranslatableText("item.numen.clay_tablet.tooltip.infusion", entry.key.name, entry.value).formatted(Formatting.GRAY)
+                })
+            }
+        }
         super.appendTooltip(stack, world, tooltip, context)
     }
 }
@@ -35,11 +42,13 @@ abstract class ClayTabletItem(settings: Settings) : Item(settings) {
 fun ItemStack.getTabletText(): String = this.getOrCreateSubNbt("ClayTablet").getString("Text")
 fun ItemStack.setTabletText(text: String) = this.getOrCreateSubNbt("ClayTablet").putString("Text", text)
 
-fun ItemStack.getTabletInfusions(): Map<Item, Int> = this.getOrCreateSubNbt("ClayTablet").getCompound("Infusions").let { nbt ->
-    nbt.keys.associate { Registry.ITEM.get(Identifier(it)) to nbt.getInt(it) }
-}
-fun ItemStack.setTabletInfusions(infusions: Map<Item, Int>) = this.getOrCreateSubNbt("ClayTablet").put("Infusions", NbtCompound().apply {
-    infusions.forEach {
-        putInt(Registry.ITEM.getId(it.key).toString(), it.value)
+fun ItemStack.getTabletInfusions(): Map<Item, Int> = readInfusions(this.getOrCreateSubNbt("ClayTablet").getCompound("Infusions"))
+fun ItemStack.setTabletInfusions(infusions: Map<Item, Int>) = this.getOrCreateSubNbt("ClayTablet").put("Infusions", infusions.write())
+
+fun Map<Item, Int>.write(): NbtCompound = NbtCompound().also { nbt ->
+    this.forEach {
+        nbt.putInt(Registry.ITEM.getId(it.key).toString(), it.value)
     }
-})
+}
+
+fun readInfusions(nbt: NbtCompound): Map<Item, Int> = nbt.keys.associate { Registry.ITEM.get(Identifier(it)) to nbt.getInt(it) }

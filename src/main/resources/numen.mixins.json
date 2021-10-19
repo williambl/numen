@@ -4,9 +4,11 @@
   "package": "com.williambl.numen.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "AbstractCauldronBlockAccessor",
     "FishingBobberEntityMixin",
     "ItemEntityMixin",
-    "ItemStackMixin"
+    "ItemStackMixin",
+    "LeveledCauldronBlockMixin"
   ],
   "client": [
   ],
