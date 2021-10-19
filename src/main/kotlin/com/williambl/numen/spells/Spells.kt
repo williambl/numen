@@ -8,6 +8,7 @@ import com.williambl.numen.id
 import com.williambl.numen.spells.component.AttachedSpellsComponent
 import com.williambl.numen.spells.component.PlayerAttachedSpellsComponent
 import com.williambl.numen.spells.tablet.EditClayTabletGuiDescription
+import com.williambl.numen.spells.tablet.FiredClayTabletItem
 import com.williambl.numen.spells.tablet.WritableClayTabletItem
 import com.williambl.numen.spells.tablet.setTabletText
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
@@ -17,12 +18,15 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry
+import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.server.command.CommandManager
 import net.minecraft.util.registry.Registry
+import java.util.*
 
 object Spells: EntityComponentInitializer {
     val REGISTRY = FabricRegistryBuilder.createSimple(Spell::class.java, id("spells")).buildAndRegister()
@@ -30,6 +34,7 @@ object Spells: EntityComponentInitializer {
     val CROP_GROWING = Registry.register(REGISTRY, id("crop_growing"), CropGrowingSpell)
 
     val WRITABLE_TABLET = Registry.register(Registry.ITEM, id("writable_tablet"), WritableClayTabletItem)
+    val FIRED_TABLET = Registry.register(Registry.ITEM, id("fired_tablet"), FiredClayTabletItem)
 
     val EDIT_CLAY_TABLET_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(id("edit_clay_tablet")) { syncId, inv -> EditClayTabletGuiDescription(syncId, inv) }
 
@@ -57,6 +62,13 @@ object Spells: EntityComponentInitializer {
             ::PlayerAttachedSpellsComponent, RespawnCopyStrategy.ALWAYS_COPY)
     }
 
+    @JvmStatic
+    fun fireClayTablet(entity: ItemEntity) {
+        val oldStack = entity.stack
+        entity.stack = ItemStack(FIRED_TABLET).apply {
+            nbt = oldStack.nbt
+        }
+    }
 
     fun PlayerEntity.getSpellsComponent(): AttachedSpellsComponent = AttachedSpellsComponent.KEY[this]
     fun PlayerEntity.attachSpell(spell: Spell, data: NbtCompound) = AttachedSpellsComponent.KEY[this].add(Pair(spell, data))

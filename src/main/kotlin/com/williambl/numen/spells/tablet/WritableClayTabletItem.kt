@@ -13,7 +13,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.TypedActionResult
 import net.minecraft.world.World
 
-object WritableClayTabletItem: ClayTabletItem(Settings().maxCount(1)) {
+object WritableClayTabletItem: ClayTabletItem(Settings().maxCount(1).fireproof()) {
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
         val stack = user.getStackInHand(hand)
         if (user is ServerPlayerEntity) {
