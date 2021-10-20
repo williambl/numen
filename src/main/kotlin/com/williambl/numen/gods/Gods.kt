@@ -7,7 +7,6 @@ import com.williambl.numen.gods.sacrifice.ChthonicEnvironmentEvaluator
 import com.williambl.numen.gods.sacrifice.NatureEnvironmentEvaluator
 import com.williambl.numen.gods.sacrifice.OceanicEnvironmentEvaluator
 import com.williambl.numen.id
-import com.williambl.numen.numenGroup
 import com.williambl.numen.registerBlockAndItem
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
@@ -16,17 +15,13 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
 import net.minecraft.block.AbstractBlock
-import net.minecraft.block.Block
 import net.minecraft.block.MapColor
 import net.minecraft.block.Material
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.BlockItem
-import net.minecraft.item.Item
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.LiteralText
-import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.poi.PointOfInterestStorage
@@ -37,9 +32,11 @@ object Gods: EntityComponentInitializer {
 
     val AGRICULTURAL_ALTAR = registerBlockAndItem(id("agricultural_altar"), AltarBlock(AbstractBlock.Settings.of(Material.STONE, MapColor.GRAY)))
     val OCEANIC_ALTAR = registerBlockAndItem(id("oceanic_altar"), AltarBlock(AbstractBlock.Settings.of(Material.STONE, MapColor.GRAY)))
+    val WEATHER_ALTAR = registerBlockAndItem(id("weather_altar"), AltarBlock(AbstractBlock.Settings.of(Material.STONE, MapColor.GRAY)))
 
     val AGRICULTURAL = Registry.register(REGISTRY, id("agricultural"), AgriculturalGod)
     val OCEANIC = Registry.register(REGISTRY, id("oceanic"), OceanicGod)
+    val WEATHER = Registry.register(REGISTRY, id("weather"), WeatherGod)
 
     fun init() {
         ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register { world, entity, killed ->
