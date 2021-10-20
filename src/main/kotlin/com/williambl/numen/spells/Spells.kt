@@ -17,6 +17,7 @@ import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry
 import net.minecraft.block.cauldron.CauldronBehavior
 import net.minecraft.block.entity.BlockEntityType
@@ -24,6 +25,7 @@ import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.resource.ResourceType
 import net.minecraft.server.command.CommandManager
 import net.minecraft.tag.ItemTags
 import net.minecraft.util.ActionResult
@@ -62,6 +64,8 @@ object Spells: EntityComponentInitializer {
             val text = buf.readString()
             server.execute { player.mainHandStack.setTabletText(text) }
         }
+
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(InfusionCauldronBlock.resourceReloadListener)
     }
 
     override fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {

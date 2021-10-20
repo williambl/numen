@@ -39,7 +39,7 @@ val baseBehaviourMap: Map<Item, CauldronBehavior> = mapOf(
 object InfusionCauldronBlock: LeveledCauldronBlock(
     Settings.copy(Blocks.WATER_CAULDRON),
     { false },
-    baseBehaviourMap.toMutableMap()
+    baseBehaviourMap.toMutableMap().withDefault { CauldronBehavior { _, _, _, _, _, _ -> ActionResult.PASS } }
 ), BlockEntityProvider {
     override fun onSyncedBlockEvent(state: BlockState?, world: World, pos: BlockPos?, type: Int, data: Int): Boolean {
         super.onSyncedBlockEvent(state, world, pos, type, data)
@@ -57,6 +57,7 @@ object InfusionCauldronBlock: LeveledCauldronBlock(
                 (world.getBlockEntity(pos) as InfusionCauldronBlockEntity).infusions.compute(entity.stack.item) { _, i ->
                     (i ?: 0) + 1
                 }
+                entity.stack.decrement(1)
             } else if (entity.stack.isOf(Spells.WRITABLE_TABLET)) {
                 entity.stack.setTabletInfusions((world.getBlockEntity(pos) as InfusionCauldronBlockEntity).infusions.toMap())
                 (world.getBlockEntity(pos) as InfusionCauldronBlockEntity).infusions.clear()
@@ -90,18 +91,19 @@ object InfusionCauldronBlock: LeveledCauldronBlock(
             behaviourMap.putAll(baseBehaviourMap)
             behaviourMap.putAll(
                 ItemTags.FLOWERS.values().map { flower -> flower to
-                        CauldronBehavior { _, world1, pos1, _, _, _ ->
+                        CauldronBehavior { _, world1, pos1, _, _, stack ->
                             @Suppress("CAST_NEVER_SUCCEEDS")
                             (world1.getBlockEntity(pos1) as InfusionCauldronBlockEntity).infusions.compute(flower) { _, i ->
                                 (i ?: 0) + 1
                             }
+                            stack.decrement(1)
                             ActionResult.SUCCESS
                         }
                 }
             )
 
             ItemTags.FLOWERS.values().forEach {
-                CauldronBehavior.WATER_CAULDRON_BEHAVIOR[it] = CauldronBehavior { state, world, pos, player, hand, stack ->
+                CauldronBehavior.WATER_CAULDRON_BEHAVIOR[it] = CauldronBehavior { state, world, pos, _, _, stack ->
                     world.setBlockState(
                         pos,
                         INFUSION_CAULDRON_BLOCK.defaultState.with(
@@ -110,6 +112,7 @@ object InfusionCauldronBlock: LeveledCauldronBlock(
                         )
                     )
                     (world.getBlockEntity(pos) as InfusionCauldronBlockEntity).infusions[stack.item] = 1
+                    stack.decrement(1)
                     ActionResult.SUCCESS
                 }
             }
