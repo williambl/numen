@@ -33,10 +33,12 @@ object Gods: EntityComponentInitializer {
     val AGRICULTURAL_ALTAR = registerBlockAndItem(id("agricultural_altar"), AltarBlock(AbstractBlock.Settings.of(Material.STONE, MapColor.GRAY)))
     val OCEANIC_ALTAR = registerBlockAndItem(id("oceanic_altar"), AltarBlock(AbstractBlock.Settings.of(Material.STONE, MapColor.GRAY)))
     val WEATHER_ALTAR = registerBlockAndItem(id("weather_altar"), AltarBlock(AbstractBlock.Settings.of(Material.STONE, MapColor.GRAY)))
+    val BATTLE_ALTAR = registerBlockAndItem(id("battle_altar"), AltarBlock(AbstractBlock.Settings.of(Material.STONE, MapColor.GRAY)))
 
     val AGRICULTURAL = Registry.register(REGISTRY, id("agricultural"), AgriculturalGod)
     val OCEANIC = Registry.register(REGISTRY, id("oceanic"), OceanicGod)
     val WEATHER = Registry.register(REGISTRY, id("weather"), WeatherGod)
+    val BATTLE = Registry.register(REGISTRY, id("battle"), WeatherGod)
 
     fun init() {
         ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register { world, entity, killed ->
