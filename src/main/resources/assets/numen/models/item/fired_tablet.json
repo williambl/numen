@@ -1,0 +1,11 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "numen:item/fired_tablet"
+    },
+    "overrides": [
+        { "predicate": { "numen:lines_written": 1.0000000 }, "model": "numen:item/fired_tablet_1" },
+        { "predicate": { "numen:lines_written": 2.0 }, "model": "numen:item/fired_tablet_2" },
+        { "predicate": { "numen:lines_written": 3.0 }, "model": "numen:item/fired_tablet_3" }
+    ]
+}
