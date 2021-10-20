@@ -77,7 +77,7 @@ object InfusionCauldronBlock: LeveledCauldronBlock(
         override fun readNbt(nbt: NbtCompound) {
             super.readNbt(nbt)
             infusions.clear()
-            infusions.putAll(readInfusions(nbt))
+            infusions.putAll(readInfusions(nbt.getCompound("Infusions")))
         }
     }
 
