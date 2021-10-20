@@ -20,7 +20,7 @@ import net.minecraft.world.poi.PointOfInterestType
 import kotlin.math.min
 
 object WeatherGod: God() {
-    override val pointOfInterestType: PointOfInterestType = PointOfInterestHelper.register(id("oceanic_altar"), 0, 1, Gods.WEATHER_ALTAR)
+    override val pointOfInterestType: PointOfInterestType = PointOfInterestHelper.register(id("weather_altar"), 0, 1, Gods.WEATHER_ALTAR)
 
     override fun onPlayerTick(world: ServerWorld, player: ServerPlayerEntity, favour: Double): Double {
         return decay(favour, 3.0)
