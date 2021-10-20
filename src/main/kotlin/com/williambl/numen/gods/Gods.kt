@@ -39,8 +39,8 @@ object Gods: EntityComponentInitializer {
     val AGRICULTURAL = Registry.register(REGISTRY, id("agricultural"), AgriculturalGod)
     val OCEANIC = Registry.register(REGISTRY, id("oceanic"), OceanicGod)
     val WEATHER = Registry.register(REGISTRY, id("weather"), WeatherGod)
-    val BATTLE = Registry.register(REGISTRY, id("battle"), WeatherGod)
-    val FIRE = Registry.register(REGISTRY, id("fire"), WeatherGod)
+    val BATTLE = Registry.register(REGISTRY, id("battle"), BattleGod)
+    val FIRE = Registry.register(REGISTRY, id("fire"), FireGod)
 
     fun init() {
         ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register { world, entity, killed ->
