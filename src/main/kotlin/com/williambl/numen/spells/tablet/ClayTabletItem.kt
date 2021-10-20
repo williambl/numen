@@ -44,6 +44,11 @@ fun ItemStack.setTabletText(text: String) = this.getOrCreateSubNbt("ClayTablet")
 
 fun ItemStack.getTabletInfusions(): Map<Item, Int> = readInfusions(this.getOrCreateSubNbt("ClayTablet").getCompound("Infusions"))
 fun ItemStack.setTabletInfusions(infusions: Map<Item, Int>) = this.getOrCreateSubNbt("ClayTablet").put("Infusions", infusions.write())
+fun ItemStack.addTabletInfusions(infusions: Map<Item, Int>) {
+    val currentInfusions = getTabletInfusions()
+    setTabletInfusions(infusions.mapValues { currentInfusions.getOrDefault(it.key, 0) + it.value }
+                    + currentInfusions.filter { !infusions.containsKey(it.key) })
+}
 
 fun Map<Item, Int>.write(): NbtCompound = NbtCompound().also { nbt ->
     this.forEach {

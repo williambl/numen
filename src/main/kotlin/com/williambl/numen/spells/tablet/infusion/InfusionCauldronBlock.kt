@@ -3,6 +3,7 @@ package com.williambl.numen.spells.tablet.infusion
 import com.williambl.numen.id
 import com.williambl.numen.mixin.AbstractCauldronBlockAccessor
 import com.williambl.numen.spells.Spells
+import com.williambl.numen.spells.tablet.addTabletInfusions
 import com.williambl.numen.spells.tablet.readInfusions
 import com.williambl.numen.spells.tablet.setTabletInfusions
 import com.williambl.numen.spells.tablet.write
@@ -55,7 +56,8 @@ object InfusionCauldronBlock: LeveledCauldronBlock(
                 }
                 entity.stack.decrement(1)
             } else if (entity.stack.isOf(Spells.WRITABLE_TABLET)) {
-                entity.stack.setTabletInfusions((world.getBlockEntity(pos) as InfusionCauldronBlockEntity).infusions.toMap())
+                entity.stack.addTabletInfusions((world.getBlockEntity(pos) as InfusionCauldronBlockEntity).infusions.toMap())
+                entity.stack = entity.stack // Force datatracker to set dirty
                 (world.getBlockEntity(pos) as InfusionCauldronBlockEntity).infusions.clear()
             }
         }
