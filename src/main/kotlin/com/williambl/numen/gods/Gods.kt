@@ -3,9 +3,6 @@ package com.williambl.numen.gods
 import com.williambl.numen.gods.component.GodFavourComponent
 import com.williambl.numen.gods.component.PlayerGodFavourComponent
 import com.williambl.numen.gods.sacrifice.AltarBlock
-import com.williambl.numen.gods.sacrifice.ChthonicEnvironmentEvaluator
-import com.williambl.numen.gods.sacrifice.NatureEnvironmentEvaluator
-import com.williambl.numen.gods.sacrifice.OceanicEnvironmentEvaluator
 import com.williambl.numen.id
 import com.williambl.numen.registerBlockAndItem
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
@@ -17,11 +14,13 @@ import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
 import net.minecraft.block.AbstractBlock
 import net.minecraft.block.MapColor
 import net.minecraft.block.Material
+import net.minecraft.command.argument.ArgumentTypes
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.server.command.CommandManager
+import net.minecraft.server.command.CommandManager.argument
+import net.minecraft.server.command.CommandManager.literal
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.text.LiteralText
+import net.minecraft.text.TranslatableText
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.poi.PointOfInterestStorage
@@ -64,43 +63,23 @@ object Gods: EntityComponentInitializer {
                 }
         }
 
+        ArgumentTypes.register("numen:god", GodArgumentType::class.java, GodArgumentType.Serialiser)
+
         CommandRegistrationCallback.EVENT.register { dispatcher, dedicated ->
-            dispatcher.register(CommandManager.literal("evaluate_naturalness").executes { ctx ->
-                val pos = BlockPos(ctx.source.position)
-                val world = ctx.source.world
-                ctx.source.sendFeedback(
-                    LiteralText(NatureEnvironmentEvaluator.evaluate(world, pos, 25, 3).toString()),
-                    false
+            dispatcher.register(literal("numen").then(literal("god")
+                .then(literal("favour")
+                    .then(argument("god", GodArgumentType.ability())
+                        .then(literal("get")
+                            .executes { ctx ->
+                                val god = GodArgumentType.getAbility(ctx, "god")
+                                val favour = ctx.source.player.getFavour(god)
+                                ctx.source.sendFeedback(TranslatableText("gui.ender_soul.favour", god, favour), false)
+                                return@executes (favour * 1000).toInt()
+                            }
+                        )
+                    )
                 )
-                return@executes 0
-            })
-            dispatcher.register(CommandManager.literal("evaluate_chthonicness").executes { ctx ->
-                val pos = BlockPos(ctx.source.position)
-                val world = ctx.source.world
-                ctx.source.sendFeedback(
-                    LiteralText(
-                        ChthonicEnvironmentEvaluator.evaluate(world, pos, 25, 3).toString()
-                    ), false
-                )
-                return@executes 0
-            })
-            dispatcher.register(CommandManager.literal("evaluate_oceanicness").executes { ctx ->
-                val pos = BlockPos(ctx.source.position)
-                val world = ctx.source.world
-                ctx.source.sendFeedback(
-                    LiteralText(OceanicEnvironmentEvaluator.evaluate(world, pos, 25, 3).toString()),
-                    false
-                )
-                return@executes 0
-            })
-            dispatcher.register(CommandManager.literal("favour").executes { ctx ->
-                try {
-                    ctx.source.sendFeedback(LiteralText(ctx.source.player.getFavour(AGRICULTURAL).toString()), false)
-                } catch (e: Exception) {
-                    println(e)
-                }
-                return@executes 0
-            })
+            ))
         }
     }
 
@@ -133,5 +112,7 @@ object Gods: EntityComponentInitializer {
     }
 
    fun PlayerEntity.getFavourComponent(): GodFavourComponent = GodFavourComponent.KEY[this]
-    fun PlayerEntity.getFavour(god: God): Double = GodFavourComponent.KEY[this][god] ?: 0.0 //we know it won't be null because of withdefault
+    fun PlayerEntity.getFavour(god: God): Double = getFavourComponent()[god] ?: 0.0
+    fun PlayerEntity.addFavour(god: God, amount: Double) = getFavourComponent().addFavour(god, amount)
+    fun PlayerEntity.modifyFavour(god: God, modifier: (Double) -> Double) = getFavourComponent().modifyFavour(god, modifier)
 }
