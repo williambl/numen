@@ -29,7 +29,7 @@ import kotlin.math.max
 import kotlin.streams.asSequence
 
 object AgriculturalGod: God(), PlayerBlockBreakEvents.After {
-    override val pointOfInterestType: PointOfInterestType = PointOfInterestHelper.register(id("agricultural_altar"), 0, 1, Blocks.AMETHYST_BLOCK)
+    override val pointOfInterestType: PointOfInterestType = PointOfInterestHelper.register(id("agricultural_altar"), 0, 1, Gods.AGRICULTURAL_ALTAR)
 
     override fun onPlayerTick(world: ServerWorld, player: ServerPlayerEntity, favour: Double): Double {
         if (world.random.nextDouble() < 0.0005*favour) {

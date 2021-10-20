@@ -89,6 +89,7 @@ object InfusionCauldronBlock: LeveledCauldronBlock(
             val behaviourMap = (this@InfusionCauldronBlock as AbstractCauldronBlockAccessor).behaviorMap
             behaviorMap.clear()
             behaviourMap.putAll(baseBehaviourMap)
+            /*
             behaviourMap.putAll(
                 ItemTags.FLOWERS.values().map { flower -> flower to
                         CauldronBehavior { _, world1, pos1, _, _, stack ->
@@ -116,6 +117,7 @@ object InfusionCauldronBlock: LeveledCauldronBlock(
                     ActionResult.SUCCESS
                 }
             }
+             */
         }
 
         override fun getFabricId(): Identifier = id("infusion_cauldron")

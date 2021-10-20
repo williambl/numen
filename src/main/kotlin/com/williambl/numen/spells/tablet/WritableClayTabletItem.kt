@@ -1,5 +1,6 @@
 package com.williambl.numen.spells.tablet
 
+import com.williambl.numen.numenGroup
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.Item
@@ -13,7 +14,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.TypedActionResult
 import net.minecraft.world.World
 
-object WritableClayTabletItem: ClayTabletItem(Settings().maxCount(1).fireproof()) {
+object WritableClayTabletItem: ClayTabletItem(Settings().maxCount(1).fireproof().group(numenGroup)) {
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
         val stack = user.getStackInHand(hand)
         if (user is ServerPlayerEntity) {

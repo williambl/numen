@@ -2,21 +2,31 @@ package com.williambl.numen.gods
 
 import com.williambl.numen.gods.component.GodFavourComponent
 import com.williambl.numen.gods.component.PlayerGodFavourComponent
+import com.williambl.numen.gods.sacrifice.AltarBlock
 import com.williambl.numen.gods.sacrifice.ChthonicEnvironmentEvaluator
 import com.williambl.numen.gods.sacrifice.NatureEnvironmentEvaluator
 import com.williambl.numen.gods.sacrifice.OceanicEnvironmentEvaluator
 import com.williambl.numen.id
+import com.williambl.numen.numenGroup
+import com.williambl.numen.registerBlockAndItem
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
+import net.minecraft.block.AbstractBlock
+import net.minecraft.block.Block
+import net.minecraft.block.MapColor
+import net.minecraft.block.Material
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.item.BlockItem
+import net.minecraft.item.Item
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.LiteralText
+import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.poi.PointOfInterestStorage
@@ -24,6 +34,9 @@ import kotlin.streams.asSequence
 
 object Gods: EntityComponentInitializer {
     val REGISTRY = FabricRegistryBuilder.createSimple(God::class.java, id("gods")).buildAndRegister()
+
+    val AGRICULTURAL_ALTAR = registerBlockAndItem(id("agricultural_altar"), AltarBlock(AbstractBlock.Settings.of(Material.STONE, MapColor.GRAY)))
+    val OCEANIC_ALTAR = registerBlockAndItem(id("oceanic_altar"), AltarBlock(AbstractBlock.Settings.of(Material.STONE, MapColor.GRAY)))
 
     val AGRICULTURAL = Registry.register(REGISTRY, id("agricultural"), AgriculturalGod)
     val OCEANIC = Registry.register(REGISTRY, id("oceanic"), OceanicGod)
@@ -118,6 +131,6 @@ object Gods: EntityComponentInitializer {
             }
     }
 
-    fun PlayerEntity.getFavourComponent(): GodFavourComponent = GodFavourComponent.KEY[this]
+   fun PlayerEntity.getFavourComponent(): GodFavourComponent = GodFavourComponent.KEY[this]
     fun PlayerEntity.getFavour(god: God): Double = GodFavourComponent.KEY[this][god] ?: 0.0 //we know it won't be null because of withdefault
 }

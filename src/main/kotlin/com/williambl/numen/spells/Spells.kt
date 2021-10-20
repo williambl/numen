@@ -3,6 +3,7 @@ package com.williambl.numen.spells
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.williambl.numen.id
 import com.williambl.numen.mixin.LeveledCauldronBlockMixin
+import com.williambl.numen.registerBlockAndItem
 import com.williambl.numen.spells.component.AttachedSpellsComponent
 import com.williambl.numen.spells.component.PlayerAttachedSpellsComponent
 import com.williambl.numen.spells.tablet.EditClayTabletGuiDescription
@@ -42,7 +43,7 @@ object Spells: EntityComponentInitializer {
 
     val EDIT_CLAY_TABLET_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(id("edit_clay_tablet")) { syncId, inv -> EditClayTabletGuiDescription(syncId, inv) }
 
-    val INFUSION_CAULDRON_BLOCK = Registry.register(Registry.BLOCK, id("infusion_cauldron"), InfusionCauldronBlock)
+    val INFUSION_CAULDRON_BLOCK = registerBlockAndItem(id("infusion_cauldron"), InfusionCauldronBlock)
     val INFUSION_CAULDRON_BE_TYPE = Registry.register(Registry.BLOCK_ENTITY_TYPE, id("infusion_cauldron"), BlockEntityType.Builder.create(
         InfusionCauldronBlock::InfusionCauldronBlockEntity,
         INFUSION_CAULDRON_BLOCK

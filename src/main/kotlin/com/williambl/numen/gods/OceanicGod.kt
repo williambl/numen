@@ -32,7 +32,7 @@ import kotlin.math.roundToInt
 import kotlin.streams.asSequence
 
 object OceanicGod: God() {
-    override val pointOfInterestType: PointOfInterestType = PointOfInterestHelper.register(id("oceanic_altar"), 0, 1, Blocks.DARK_PRISMARINE)
+    override val pointOfInterestType: PointOfInterestType = PointOfInterestHelper.register(id("oceanic_altar"), 0, 1, Gods.OCEANIC_ALTAR)
 
     override fun onPlayerTick(world: ServerWorld, player: ServerPlayerEntity, favour: Double): Double {
         return decay(favour, 1.2)

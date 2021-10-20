@@ -1,6 +1,7 @@
 package com.williambl.numen.spells.tablet
 
 import com.williambl.numen.id
+import com.williambl.numen.numenGroup
 import com.williambl.numen.spells.Spells
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
@@ -17,7 +18,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.TypedActionResult
 import net.minecraft.world.World
 
-object FiredClayTabletItem: ClayTabletItem(Settings().maxCount(1).fireproof()) {
+object FiredClayTabletItem: ClayTabletItem(Settings().maxCount(1).fireproof().group(numenGroup)) {
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
         val stack = user.getStackInHand(hand)
         val spellText = stack.getTabletText()
