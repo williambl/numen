@@ -1,9 +1,17 @@
 {
-  "item.numen.writable_clay_tablet": "Writable Clay Tablet",
+  "itemGroup.numen.numen": "Numen",
+  "item.numen.writable_tablet": "Writable Clay Tablet",
+  "item.numen.fired_tablet": "Fired Clay Tablet",
   "item.numen.clay_tablet.tooltip.no_inscription": "No Inscription",
   "item.numen.clay_tablet.tooltip.inscription": "Inscription: %s",
   "item.numen.clay_tablet.tooltip.no_infusions": "No Infusions",
   "item.numen.clay_tablet.tooltip.infusions": "Infusions: %s",
   "item.numen.clay_tablet.tooltip.infusion": "  %2$dx %1$s",
+  "block.numen.agricultural_altar": "Agricultural Altar",
+  "block.numen.oceanic_altar": "Oceanic Altar",
+  "block.numen.weather_altar": "Weather Altar",
+  "block.numen.battle_altar": "Battle Altar",
+  "block.numen.fire_altar": "Fire Altar",
+  "block.numen.infusion_cauldron": "Infusing Cauldron",
   "gui.ender_soul.favour": "%1$s Favor: %2$d"
 }
