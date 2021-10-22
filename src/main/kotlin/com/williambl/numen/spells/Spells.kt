@@ -38,6 +38,7 @@ object Spells: EntityComponentInitializer {
     val REGISTRY = FabricRegistryBuilder.createSimple(Spell::class.java, id("spells")).buildAndRegister()
 
     val CROP_GROWING = Registry.register(REGISTRY, id("crop_growing"), CropGrowingSpell)
+    val FIREBALL = Registry.register(REGISTRY, id("fireball"), FireballSpell)
 
     val WRITABLE_TABLET = Registry.register(Registry.ITEM, id("writable_tablet"), WritableClayTabletItem)
     val FIRED_TABLET = Registry.register(Registry.ITEM, id("fired_tablet"), FiredClayTabletItem)
