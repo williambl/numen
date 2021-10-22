@@ -4,7 +4,9 @@ import com.williambl.numen.spells.SpellData
 import com.williambl.numen.spells.Spells
 import dev.onyxstudios.cca.api.v3.component.CopyableComponent
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.nbt.*
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtElement
+import net.minecraft.nbt.NbtList
 import net.minecraft.util.Identifier
 
 class PlayerAttachedSpellsComponent(val owner: PlayerEntity): AttachedSpellsComponent, CopyableComponent<AttachedSpellsComponent>, MutableList<SpellData> by mutableListOf() {
@@ -28,7 +30,7 @@ class PlayerAttachedSpellsComponent(val owner: PlayerEntity): AttachedSpellsComp
     }
 
     override fun tick() {
-        this.forEach { (spell, data) ->
+        this.removeIf { (spell, data) ->
             spell.onTick(owner, data)
         }
     }
