@@ -1,17 +1,12 @@
 package com.williambl.numen.spells.tablet.infusion
 
-import com.williambl.numen.id
 import com.williambl.numen.mixin.AbstractCauldronBlockAccessor
-import com.williambl.numen.mixin.LeveledCauldronBlockMixin
 import com.williambl.numen.spells.Spells
-import com.williambl.numen.spells.Spells.INFUSION_CAULDRON_BLOCK
 import com.williambl.numen.spells.tablet.addTabletInfusions
 import com.williambl.numen.spells.tablet.readInfusions
 import com.williambl.numen.spells.tablet.setTabletInfusions
 import com.williambl.numen.spells.tablet.write
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
-import net.fabricmc.fabric.api.resource.ResourceReloadListenerKeys
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
 import net.minecraft.block.BlockEntityProvider
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
@@ -20,26 +15,29 @@ import net.minecraft.block.cauldron.CauldronBehavior
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.entity.Entity
 import net.minecraft.entity.ItemEntity
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.NbtCompound
-import net.minecraft.resource.ResourceManager
 import net.minecraft.resource.ServerResourceManager
 import net.minecraft.server.MinecraftServer
 import net.minecraft.sound.SoundEvents
 import net.minecraft.tag.ItemTags
 import net.minecraft.util.ActionResult
-import net.minecraft.util.Hand
-import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
 val baseBehaviourMap: Map<Item, CauldronBehavior> = mapOf(
-    Pair(Spells.WRITABLE_TABLET, CauldronBehavior { _, world, pos, _, _, stack ->
+    Pair(Spells.WRITABLE_TABLET, CauldronBehavior { state, world, pos, _, _, stack ->
         stack.setTabletInfusions((world.getBlockEntity(pos) as InfusionCauldronBlock.InfusionCauldronBlockEntity).infusions.toMap())
         (world.getBlockEntity(pos) as InfusionCauldronBlock.InfusionCauldronBlockEntity).infusions.clear()
+        world.setBlockState(
+            pos,
+            Blocks.WATER_CAULDRON.defaultState.with(
+                LeveledCauldronBlock.LEVEL,
+                state.get(LeveledCauldronBlock.LEVEL)
+            )
+        )
         ActionResult.SUCCESS
     }),
     Pair(
@@ -89,6 +87,13 @@ object InfusionCauldronBlock: LeveledCauldronBlock(
                 entity.stack.addTabletInfusions((world.getBlockEntity(pos) as InfusionCauldronBlockEntity).infusions.toMap())
                 entity.stack = entity.stack // Force datatracker to set dirty
                 (world.getBlockEntity(pos) as InfusionCauldronBlockEntity).infusions.clear()
+                world.setBlockState(
+                    pos,
+                    Blocks.WATER_CAULDRON.defaultState.with(
+                        LEVEL,
+                        state.get(LEVEL)
+                    )
+                )
             }
         }
 
@@ -111,38 +116,38 @@ object InfusionCauldronBlock: LeveledCauldronBlock(
         }
     }
 
-        fun reload() {
-            @Suppress("CAST_NEVER_SUCCEEDS")
-            val behaviourMap = (this@InfusionCauldronBlock as AbstractCauldronBlockAccessor).behaviorMap
-            behaviorMap.clear()
-            behaviourMap.putAll(baseBehaviourMap)
-            behaviourMap.putAll(
-                ItemTags.FLOWERS.values().map { flower -> flower to
-                        CauldronBehavior { _, world1, pos1, _, _, stack ->
-                            @Suppress("CAST_NEVER_SUCCEEDS")
-                            (world1.getBlockEntity(pos1) as InfusionCauldronBlockEntity).infusions.compute(flower) { _, i ->
-                                (i ?: 0) + 1
-                            }
-                            stack.decrement(1)
-                            ActionResult.SUCCESS
+    fun reload() {
+        @Suppress("CAST_NEVER_SUCCEEDS")
+        val behaviourMap = (this@InfusionCauldronBlock as AbstractCauldronBlockAccessor).behaviorMap
+        behaviorMap.clear()
+        behaviourMap.putAll(baseBehaviourMap)
+        behaviourMap.putAll(
+            ItemTags.FLOWERS.values().map { flower -> flower to
+                    CauldronBehavior { _, world1, pos1, _, _, stack ->
+                        @Suppress("CAST_NEVER_SUCCEEDS")
+                        (world1.getBlockEntity(pos1) as InfusionCauldronBlockEntity).infusions.compute(flower) { _, i ->
+                            (i ?: 0) + 1
                         }
-                }
-            )
-
-            ItemTags.FLOWERS.values().forEach {
-                CauldronBehavior.WATER_CAULDRON_BEHAVIOR[it] = CauldronBehavior { state, world, pos, _, _, stack ->
-                    world.setBlockState(
-                        pos,
-                        this@InfusionCauldronBlock.defaultState.with(
-                            LeveledCauldronBlockMixin.LEVEL,
-                            state.get(LeveledCauldronBlockMixin.LEVEL)
-                        )
-                    )
-                    (world.getBlockEntity(pos) as InfusionCauldronBlockEntity).infusions[stack.item] = 1
-                    stack.decrement(1)
-                    ActionResult.SUCCESS
-                }
+                        stack.decrement(1)
+                        ActionResult.SUCCESS
+                    }
             }
+        )
+
+        ItemTags.FLOWERS.values().forEach {
+            CauldronBehavior.WATER_CAULDRON_BEHAVIOR[it] = CauldronBehavior { state, world, pos, _, _, stack ->
+                world.setBlockState(
+                    pos,
+                    this@InfusionCauldronBlock.defaultState.with(
+                        LEVEL,
+                        state.get(LEVEL)
+                    )
+                )
+                (world.getBlockEntity(pos) as InfusionCauldronBlockEntity).infusions[stack.item] = 1
+                stack.decrement(1)
+                ActionResult.SUCCESS
+            }
+        }
     }
 
     override fun onServerStarted(server: MinecraftServer?) {
