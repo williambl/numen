@@ -2,11 +2,14 @@ package com.williambl.numen.spells.tablet.infusion
 
 import com.williambl.numen.id
 import com.williambl.numen.mixin.AbstractCauldronBlockAccessor
+import com.williambl.numen.mixin.LeveledCauldronBlockMixin
 import com.williambl.numen.spells.Spells
+import com.williambl.numen.spells.Spells.INFUSION_CAULDRON_BLOCK
 import com.williambl.numen.spells.tablet.addTabletInfusions
 import com.williambl.numen.spells.tablet.readInfusions
 import com.williambl.numen.spells.tablet.setTabletInfusions
 import com.williambl.numen.spells.tablet.write
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.resource.ResourceReloadListenerKeys
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
 import net.minecraft.block.BlockEntityProvider
@@ -17,28 +20,55 @@ import net.minecraft.block.cauldron.CauldronBehavior
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.entity.Entity
 import net.minecraft.entity.ItemEntity
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.resource.ResourceManager
+import net.minecraft.resource.ServerResourceManager
+import net.minecraft.server.MinecraftServer
+import net.minecraft.sound.SoundEvents
 import net.minecraft.tag.ItemTags
 import net.minecraft.util.ActionResult
+import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
 val baseBehaviourMap: Map<Item, CauldronBehavior> = mapOf(
-    Pair(Spells.WRITABLE_TABLET, CauldronBehavior { state, world, pos, player, hand, stack ->
+    Pair(Spells.WRITABLE_TABLET, CauldronBehavior { _, world, pos, _, _, stack ->
         stack.setTabletInfusions((world.getBlockEntity(pos) as InfusionCauldronBlock.InfusionCauldronBlockEntity).infusions.toMap())
         (world.getBlockEntity(pos) as InfusionCauldronBlock.InfusionCauldronBlockEntity).infusions.clear()
         ActionResult.SUCCESS
-    })
+    }),
+    Pair(
+        Items.BUCKET,
+        CauldronBehavior { state, world, pos, player, hand, stack ->
+            CauldronBehavior.emptyCauldron(
+                state,
+                world,
+                pos,
+                player,
+                hand,
+                stack,
+                ItemStack(Items.WATER_BUCKET),
+                { statex: BlockState ->
+                    statex.get(
+                        LeveledCauldronBlock.LEVEL
+                    ) as Int == 3
+                },
+                SoundEvents.ITEM_BUCKET_FILL
+            )
+        }
+    )
 )
 
 object InfusionCauldronBlock: LeveledCauldronBlock(
     Settings.copy(Blocks.WATER_CAULDRON),
     { false },
     baseBehaviourMap.toMutableMap().withDefault { CauldronBehavior { _, _, _, _, _, _ -> ActionResult.PASS } }
-), BlockEntityProvider {
+), BlockEntityProvider, ServerLifecycleEvents.ServerStarted, ServerLifecycleEvents.EndDataPackReload {
     override fun onSyncedBlockEvent(state: BlockState?, world: World, pos: BlockPos?, type: Int, data: Int): Boolean {
         super.onSyncedBlockEvent(state, world, pos, type, data)
         val blockEntity = world.getBlockEntity(pos)
@@ -81,13 +111,11 @@ object InfusionCauldronBlock: LeveledCauldronBlock(
         }
     }
 
-    val resourceReloadListener = object : SimpleSynchronousResourceReloadListener {
-        override fun reload(manager: ResourceManager) {
+        fun reload() {
             @Suppress("CAST_NEVER_SUCCEEDS")
             val behaviourMap = (this@InfusionCauldronBlock as AbstractCauldronBlockAccessor).behaviorMap
             behaviorMap.clear()
             behaviourMap.putAll(baseBehaviourMap)
-            /*
             behaviourMap.putAll(
                 ItemTags.FLOWERS.values().map { flower -> flower to
                         CauldronBehavior { _, world1, pos1, _, _, stack ->
@@ -105,7 +133,7 @@ object InfusionCauldronBlock: LeveledCauldronBlock(
                 CauldronBehavior.WATER_CAULDRON_BEHAVIOR[it] = CauldronBehavior { state, world, pos, _, _, stack ->
                     world.setBlockState(
                         pos,
-                        INFUSION_CAULDRON_BLOCK.defaultState.with(
+                        this@InfusionCauldronBlock.defaultState.with(
                             LeveledCauldronBlockMixin.LEVEL,
                             state.get(LeveledCauldronBlockMixin.LEVEL)
                         )
@@ -115,11 +143,17 @@ object InfusionCauldronBlock: LeveledCauldronBlock(
                     ActionResult.SUCCESS
                 }
             }
-             */
-        }
+    }
 
-        override fun getFabricId(): Identifier = id("infusion_cauldron")
+    override fun onServerStarted(server: MinecraftServer?) {
+        reload()
+    }
 
-        override fun getFabricDependencies(): MutableCollection<Identifier> = mutableSetOf(ResourceReloadListenerKeys.TAGS)
+    override fun endDataPackReload(
+        server: MinecraftServer?,
+        serverResourceManager: ServerResourceManager?,
+        success: Boolean
+    ) {
+        reload()
     }
 }

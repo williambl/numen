@@ -6,10 +6,18 @@ import com.williambl.numen.spells.Spells
 import com.williambl.numen.spells.tablet.EditClayTabletGuiDescription
 import com.williambl.numen.spells.tablet.getTabletText
 import net.fabricmc.fabric.api.`object`.builder.v1.client.model.FabricModelPredicateProviderRegistry
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry
+import net.minecraft.block.BlockState
+import net.minecraft.block.Blocks
+import net.minecraft.client.MinecraftClient
+import net.minecraft.client.color.block.BlockColorProvider
+import net.minecraft.client.color.world.BiomeColors
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.text.Text
+import net.minecraft.util.math.BlockPos
+import net.minecraft.world.BlockRenderView
 
 
 fun clientInit() {
@@ -36,5 +44,14 @@ fun clientInit() {
             text.isNotEmpty() -> 1.0f
             else -> 0.0f
         }
+    }
+
+    ClientLifecycleEvents.CLIENT_STARTED.register { client ->
+        client.blockColors.registerColorProvider({ _, world, pos, _ ->
+            if (world != null && pos != null) BiomeColors.getWaterColor(
+                world,
+                pos
+            ) else -1
+        }, Spells.INFUSION_CAULDRON_BLOCK)
     }
 }

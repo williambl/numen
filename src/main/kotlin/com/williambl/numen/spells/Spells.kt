@@ -16,6 +16,7 @@ import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper
@@ -43,7 +44,7 @@ object Spells: EntityComponentInitializer {
 
     val EDIT_CLAY_TABLET_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(id("edit_clay_tablet")) { syncId, inv -> EditClayTabletGuiDescription(syncId, inv) }
 
-    val INFUSION_CAULDRON_BLOCK = registerBlockAndItem(id("infusion_cauldron"), InfusionCauldronBlock)
+    val INFUSION_CAULDRON_BLOCK = Registry.register(Registry.BLOCK, id("infusion_cauldron"), InfusionCauldronBlock)
     val INFUSION_CAULDRON_BE_TYPE = Registry.register(Registry.BLOCK_ENTITY_TYPE, id("infusion_cauldron"), BlockEntityType.Builder.create(
         InfusionCauldronBlock::InfusionCauldronBlockEntity,
         INFUSION_CAULDRON_BLOCK
@@ -66,7 +67,8 @@ object Spells: EntityComponentInitializer {
             server.execute { player.mainHandStack.setTabletText(text) }
         }
 
-        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(InfusionCauldronBlock.resourceReloadListener)
+        ServerLifecycleEvents.SERVER_STARTED.register(INFUSION_CAULDRON_BLOCK)
+        ServerLifecycleEvents.END_DATA_PACK_RELOAD.register(INFUSION_CAULDRON_BLOCK)
     }
 
     override fun registerEntityComponentFactories(registry: EntityComponentFactoryRegistry) {
