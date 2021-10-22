@@ -29,7 +29,7 @@ object FireGod: God() {
     }
 
     override fun onSacrifice(world: World, pos: BlockPos, sacrificer: PlayerEntity, sacrificed: LivingEntity) {
-        sacrificer.getFavourComponent().modifyFavour(this) { fv -> fv + evaluate(sacrificed) * 0.2 * evaluate(world, pos, 20, 3) }
+        sacrificer.getFavourComponent().modifyFavour(this) { fv -> fv + evaluate(sacrificed) * 1.2 * evaluate(world, pos, 20, 3) }
 
         if (world.random.nextDouble() < 0.2 && world.getBlockState(pos.up()).isAir) {
             world.setBlockState(pos.up(), Blocks.FIRE.defaultState)
