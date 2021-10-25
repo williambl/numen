@@ -17,6 +17,7 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 import net.minecraft.world.poi.PointOfInterestType
+import kotlin.math.abs
 import kotlin.math.min
 
 object WeatherGod: God() {
@@ -42,7 +43,7 @@ object WeatherGod: God() {
     }
 
     override fun evaluate(world: World, centre: BlockPos, radius: Int, yRadius: Int): Double {
-        return NatureEnvironmentEvaluator.evaluate(world, centre, radius, yRadius) * min(1.0, (1.0/((world.height*0.5)-world.bottomY))*(centre.y - (world.height*0.5))) * if (world.isSkyVisible(centre)) 1.0 else 0.1
+        return NatureEnvironmentEvaluator.evaluate(world, centre, radius, yRadius) * min(1.0, abs((1.0/(world.height -world.bottomY))*(centre.y - (world.height*0.15)))) * if (world.isSkyVisible(centre.up())) 1.0 else 0.1
     }
 
     override fun evaluate(victim: LivingEntity): Double {
