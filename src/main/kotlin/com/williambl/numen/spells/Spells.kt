@@ -2,15 +2,12 @@ package com.williambl.numen.spells
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.williambl.numen.id
-import com.williambl.numen.mixin.LeveledCauldronBlockMixin
-import com.williambl.numen.registerBlockAndItem
 import com.williambl.numen.spells.component.AttachedSpellsComponent
 import com.williambl.numen.spells.component.PlayerAttachedSpellsComponent
 import com.williambl.numen.spells.tablet.EditClayTabletGuiDescription
 import com.williambl.numen.spells.tablet.FiredClayTabletItem
 import com.williambl.numen.spells.tablet.WritableClayTabletItem
 import com.williambl.numen.spells.tablet.infusion.InfusionCauldronBlock
-import com.williambl.numen.spells.tablet.infusion.InfusionCauldronBlock.InfusionCauldronBlockEntity
 import com.williambl.numen.spells.tablet.setTabletText
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer
@@ -19,26 +16,21 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry
-import net.minecraft.block.cauldron.CauldronBehavior
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
-import net.minecraft.resource.ResourceType
 import net.minecraft.server.command.CommandManager
-import net.minecraft.tag.ItemTags
-import net.minecraft.util.ActionResult
 import net.minecraft.util.registry.Registry
-import java.util.*
 
 object Spells: EntityComponentInitializer {
     val REGISTRY = FabricRegistryBuilder.createSimple(Spell::class.java, id("spells")).buildAndRegister()
 
     val CROP_GROWING = Registry.register(REGISTRY, id("crop_growing"), CropGrowingSpell)
     val FIREBALL = Registry.register(REGISTRY, id("fireball"), FireballSpell)
+    val WEATHER_CONTROLLING = Registry.register(REGISTRY, id("weather_controlling"), WeatherControllingSpell)
 
     val WRITABLE_TABLET = Registry.register(Registry.ITEM, id("writable_tablet"), WritableClayTabletItem)
     val FIRED_TABLET = Registry.register(Registry.ITEM, id("fired_tablet"), FiredClayTabletItem)
